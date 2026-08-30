@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Seating Constraints & Real-time Conflict Validation Module
  * Manages 'Pair together' (같이 앉기) and 'Keep apart' (같이 앉지 않기) conditions.
  */

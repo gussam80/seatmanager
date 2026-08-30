@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Dedicated Print & Export Helper Module
  */
 

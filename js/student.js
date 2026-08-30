@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Student Roster & Excel Import/Export Management Module
  * Supports Excel (.xlsx, .xls, .csv) upload, template generation,
  * student list CRUD, and gender tagging.

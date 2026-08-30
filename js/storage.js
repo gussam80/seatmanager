@@ -1,4 +1,4 @@
-﻿/**
+/**
  * LocalStorage & Data Backup/Restore Management Module
  */
 

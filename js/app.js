@@ -3,7 +3,7 @@
  * Main Application Controller & UI Coordinator
  */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize State & Managers
   const classroom = new ClassroomManager(5, 6);
   const studentMgr = new StudentManager();
@@ -24,123 +24,124 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Set initial date in input
-  const dateInput = document.getElementById("seating-date-input");
+  const dateInput = document.getElementById('seating-date-input');
   if (dateInput) dateInput.value = seatingDate;
 
   // 2. DOM Elements Cache
-  const stepTabs = document.querySelectorAll(".step-tab");
-  const stepPanels = document.querySelectorAll(".step-panel");
+  const stepTabs = document.querySelectorAll('.step-tab');
+  const stepPanels = document.querySelectorAll('.step-panel');
 
-  const statStudents = document.getElementById("stat-students-count");
-  const statCapacity = document.getElementById("stat-capacity-count");
-  const statSpare = document.getElementById("stat-spare-count");
-  const statConditions = document.getElementById("stat-conditions-count");
-  const spareBadge = document.getElementById("stat-spare-badge");
+  const statStudents = document.getElementById('stat-students-count');
+  const statCapacity = document.getElementById('stat-capacity-count');
+  const statSpare = document.getElementById('stat-spare-count');
+  const statConditions = document.getElementById('stat-conditions-count');
+  const spareBadge = document.getElementById('stat-spare-badge');
 
   // Step 1 Elements
-  const rowsInput = document.getElementById("input-rows");
-  const colsInput = document.getElementById("input-cols");
-  const btnRowDec = document.getElementById("btn-row-dec");
-  const btnRowInc = document.getElementById("btn-row-inc");
-  const btnColDec = document.getElementById("btn-col-dec");
-  const btnColInc = document.getElementById("btn-col-inc");
-  const classroomLayoutGrid = document.getElementById("classroom-layout-grid");
-  const layoutStatsInfo = document.getElementById("layout-stats-info");
-  const podiumPositionSelect = document.getElementById("podium-position-select");
+  const rowsInput = document.getElementById('input-rows');
+  const colsInput = document.getElementById('input-cols');
+  const btnRowDec = document.getElementById('btn-row-dec');
+  const btnRowInc = document.getElementById('btn-row-inc');
+  const btnColDec = document.getElementById('btn-col-dec');
+  const btnColInc = document.getElementById('btn-col-inc');
+  const classroomLayoutGrid = document.getElementById('classroom-layout-grid');
+  const layoutStatsInfo = document.getElementById('layout-stats-info');
+  const podiumPositionSelect = document.getElementById('podium-position-select');
 
   // Step 2 Elements
-  const excelDropzone = document.getElementById("excel-dropzone");
-  const excelFileInput = document.getElementById("excel-file-input");
-  const btnDownloadTemplate = document.getElementById("btn-download-template");
-  const btnLoadSample = document.getElementById("btn-load-sample");
-  const btnClearStudents = document.getElementById("btn-clear-students");
-  const studentTableBody = document.getElementById("student-table-body");
-  const studentCountDisplay = document.getElementById("student-count-display");
-  const studentSearchInput = document.getElementById("student-search-input");
-  const formAddStudent = document.getElementById("form-add-student");
-  const inputStudentNum = document.getElementById("add-student-num");
-  const inputStudentName = document.getElementById("add-student-name");
-  const selectStudentGender = document.getElementById("add-student-gender");
+  const excelDropzone = document.getElementById('excel-dropzone');
+  const excelFileInput = document.getElementById('excel-file-input');
+  const btnDownloadTemplate = document.getElementById('btn-download-template');
+  const btnLoadSample = document.getElementById('btn-load-sample');
+  const btnClearStudents = document.getElementById('btn-clear-students');
+  const studentTableBody = document.getElementById('student-table-body');
+  const studentCountDisplay = document.getElementById('student-count-display');
+  const studentSearchInput = document.getElementById('student-search-input');
+  const formAddStudent = document.getElementById('form-add-student');
+  const inputStudentNum = document.getElementById('add-student-num');
+  const inputStudentName = document.getElementById('add-student-name');
+  const selectStudentGender = document.getElementById('add-student-gender');
 
   // Step 3 Elements
-  const selectPair1 = document.getElementById("select-pair-1");
-  const selectPair2 = document.getElementById("select-pair-2");
-  const btnAddPair = document.getElementById("btn-add-pair");
-  const pairConditionsList = document.getElementById("pair-conditions-list");
-  const selectAvoid1 = document.getElementById("select-avoid-1");
-  const selectAvoid2 = document.getElementById("select-avoid-2");
-  const btnAddAvoid = document.getElementById("btn-add-avoid");
-  const avoidConditionsList = document.getElementById("avoid-conditions-list");
-  const conflictAlertContainer = document.getElementById("conflict-alert-container");
-  const btnClearConditions = document.getElementById("btn-clear-conditions");
+  const selectPair1 = document.getElementById('select-pair-1');
+  const selectPair2 = document.getElementById('select-pair-2');
+  const btnAddPair = document.getElementById('btn-add-pair');
+  const pairConditionsList = document.getElementById('pair-conditions-list');
+  const selectAvoid1 = document.getElementById('select-avoid-1');
+  const selectAvoid2 = document.getElementById('select-avoid-2');
+  const btnAddAvoid = document.getElementById('btn-add-avoid');
+  const avoidConditionsList = document.getElementById('avoid-conditions-list');
+  const conflictAlertContainer = document.getElementById('conflict-alert-container');
+  const btnClearConditions = document.getElementById('btn-clear-conditions');
 
   // Step 4 Elements
-  const btnRunSeating = document.getElementById("btn-run-seating");
-  const btnReshuffle = document.getElementById("btn-reshuffle");
-  const btnOpenSaveModal = document.getElementById("btn-open-save-modal");
-  const btnOpenPrintModal = document.getElementById("btn-open-print-modal");
-  const classroomResultGrid = document.getElementById("classroom-result-grid");
-  const seatingResultDateDisplay = document.getElementById("seating-result-date-display");
+  const btnRunSeating = document.getElementById('btn-run-seating');
+  const btnReshuffle = document.getElementById('btn-reshuffle');
+  const btnOpenSaveModal = document.getElementById('btn-open-save-modal');
+  const btnOpenPrintModal = document.getElementById('btn-open-print-modal');
+  const classroomResultGrid = document.getElementById('classroom-result-grid');
+  const seatingResultDateDisplay = document.getElementById('seating-result-date-display');
 
   // Step 5 Elements
-  const historyTableBody = document.getElementById("history-table-body");
-  const historyCountDisplay = document.getElementById("history-count-display");
-  const btnClearHistory = document.getElementById("btn-clear-history");
+  const historyTableBody = document.getElementById('history-table-body');
+  const historyCountDisplay = document.getElementById('history-count-display');
+  const btnClearHistory = document.getElementById('btn-clear-history');
 
   // Header Actions
-  const btnExportJson = document.getElementById("btn-export-json");
-  const btnImportJson = document.getElementById("btn-import-json");
-  const importJsonInput = document.getElementById("import-json-input");
-  const btnResetAll = document.getElementById("btn-reset-all");
-  const btnOpenGuide = document.getElementById("btn-open-guide");
+  const btnExportJson = document.getElementById('btn-export-json');
+  const btnImportJson = document.getElementById('btn-import-json');
+  const importJsonInput = document.getElementById('import-json-input');
+  const btnResetAll = document.getElementById('btn-reset-all');
+  const btnOpenGuide = document.getElementById('btn-open-guide');
 
   // Modals
-  const saveModal = document.getElementById("modal-save");
-  const printModal = document.getElementById("modal-print");
-  const guideModal = document.getElementById("modal-guide");
-  const resetModal = document.getElementById("modal-reset");
+  const saveModal = document.getElementById('modal-save');
+  const printModal = document.getElementById('modal-print');
+  const guideModal = document.getElementById('modal-guide');
+  const resetModal = document.getElementById('modal-reset');
 
   // 3. UI Helper Functions
-  function showToast(message, type = "info") {
-    const container = document.getElementById("toast-container");
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
     if (!container) return;
-    const toast = document.createElement("div");
+    const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    let icon = "ℹ️";
-    if (type === "success") icon = "✅";
-    if (type === "warning") icon = "⚠️";
-    if (type === "error") icon = "🚨";
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'warning') icon = '⚠️';
+    if (type === 'error') icon = '🚨';
 
     toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateY(10px)";
-      toast.style.transition = "all 0.3s ease";
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      toast.style.transition = 'all 0.3s ease';
       setTimeout(() => toast.remove(), 300);
     }, 3200);
   }
 
   function openModal(modal) {
-    if (modal) modal.classList.add("show");
+    if (modal) modal.classList.add('show');
   }
 
   function closeModal(modal) {
-    if (modal) modal.classList.remove("show");
+    if (modal) modal.classList.remove('show');
   }
 
-  document.querySelectorAll("[data-close-modal]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const targetId = btn.getAttribute("data-close-modal");
+  document.querySelectorAll('[data-close-modal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-close-modal');
       closeModal(document.getElementById(targetId));
     });
   });
 
-  document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
-    backdrop.addEventListener("click", (e) => {
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) closeModal(backdrop);
     });
   });
+
   // 4. Update Header Stats Bar
   function updateGlobalStats() {
     const stats = classroom.getStats();
@@ -220,14 +221,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!classroomLayoutGrid) return;
     if (rowsInput) rowsInput.value = classroom.rows;
     if (colsInput) colsInput.value = classroom.cols;
+    if (podiumPositionSelect) podiumPositionSelect.value = classroom.podiumPosition;
+
+    // Update podium position on container
+    const layoutContainers = document.querySelectorAll('.classroom-layout-container');
+    layoutContainers.forEach(container => {
+      container.classList.toggle('podium-bottom', classroom.podiumPosition === 'bottom');
+    });
 
     classroomLayoutGrid.style.gridTemplateColumns = `repeat(${classroom.cols}, minmax(80px, 1fr))`;
     classroomLayoutGrid.innerHTML = '';
-
-    const podiumArea = document.querySelector('.teacher-podium-area');
-    if (podiumArea) {
-      podiumArea.classList.toggle('bottom-position', classroom.podiumPosition === 'bottom');
-    }
 
     for (let r = 0; r < classroom.rows; r++) {
       for (let c = 0; c < classroom.cols; c++) {
@@ -286,8 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnColDec) btnColDec.addEventListener('click', () => { classroom.resize(classroom.rows, classroom.cols - 1); renderLayoutEditor(); updateGlobalStats(); saveState(); });
   if (btnColInc) btnColInc.addEventListener('click', () => { classroom.resize(classroom.rows, classroom.cols + 1); renderLayoutEditor(); updateGlobalStats(); saveState(); });
 
-  if (rowsInput) rowsInput.addEventListener('change', (e) => { classroom.resize(e.target.value, classroom.cols); renderLayoutEditor(); updateGlobalStats(); saveState(); });
-  if (colsInput) colsInput.addEventListener('change', (e) => { classroom.resize(classroom.rows, e.target.value); renderLayoutEditor(); updateGlobalStats(); saveState(); });
+  if (rowsInput) rowsInput.addEventListener('change', (e) => { classroom.resize(parseInt(e.target.value, 10), classroom.cols); renderLayoutEditor(); updateGlobalStats(); saveState(); });
+  if (colsInput) colsInput.addEventListener('change', (e) => { classroom.resize(classroom.rows, parseInt(e.target.value, 10)); renderLayoutEditor(); updateGlobalStats(); saveState(); });
 
   // Presets
   document.querySelectorAll('[data-preset]').forEach(btn => {
@@ -307,13 +310,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnAllDouble) btnAllDouble.addEventListener('click', () => { classroom.setAllDeskTypes('double'); renderLayoutEditor(); updateGlobalStats(); saveState(); });
 
   if (podiumPositionSelect) {
-    podiumPositionSelect.value = classroom.podiumPosition;
     podiumPositionSelect.addEventListener('change', (e) => {
       classroom.podiumPosition = e.target.value;
       renderLayoutEditor();
       saveState();
+      showToast(`교탁 위치가 '${e.target.options[e.target.selectedIndex].text}'으로 변경되었습니다.`, 'info');
     });
   }
+
   // 7. Step 2: Student Management & Excel Upload
   function renderStudentTable(filterText = '') {
     if (!studentTableBody) return;
@@ -620,9 +624,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
   // 9. Step 4: Seating Execution & Visualization
   function renderEmptySeatingResult() {
     if (!classroomResultGrid) return;
+    const layoutContainers = document.querySelectorAll('.classroom-layout-container');
+    layoutContainers.forEach(container => {
+      container.classList.toggle('podium-bottom', classroom.podiumPosition === 'bottom');
+    });
+
     classroomResultGrid.style.gridTemplateColumns = `repeat(${classroom.cols}, minmax(80px, 1fr))`;
     classroomResultGrid.innerHTML = '';
 
@@ -657,6 +667,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderSeatingResult(assignment) {
     if (!classroomResultGrid) return;
+    const layoutContainers = document.querySelectorAll('.classroom-layout-container');
+    layoutContainers.forEach(container => {
+      container.classList.toggle('podium-bottom', classroom.podiumPosition === 'bottom');
+    });
+
     classroomResultGrid.style.gridTemplateColumns = `repeat(${classroom.cols}, minmax(80px, 1fr))`;
     classroomResultGrid.innerHTML = '';
 

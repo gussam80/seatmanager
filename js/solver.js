@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Seating Arrangement Solver Module
  * Randomized Constraint Satisfaction Algorithm with up to 1000 iterations.
  * Guaranteed to satisfy pair conditions and avoid conditions.
