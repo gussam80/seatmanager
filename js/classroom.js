@@ -18,11 +18,11 @@ class ClassroomManager {
       const row = [];
       for (let c = 0; c < this.cols; c++) {
         row.push({
-          id: desk__,
+          id: 'desk_' + r + '_' + c,
           row: r,
           col: c,
           deskNumber: deskNumber++,
-          type: 'double', // 'single' | 'double' | 'empty'
+          type: 'double' // 'single' | 'double' | 'empty'
         });
       }
       this.grid.push(row);
@@ -48,7 +48,7 @@ class ClassroomManager {
         if (r < oldRows && c < oldCols && oldGrid[r] && oldGrid[r][c]) {
           const oldDesk = oldGrid[r][c];
           row.push({
-            id: desk__,
+            id: 'desk_' + r + '_' + c,
             row: r,
             col: c,
             deskNumber: deskNumber++,
@@ -56,7 +56,7 @@ class ClassroomManager {
           });
         } else {
           row.push({
-            id: desk__,
+            id: 'desk_' + r + '_' + c,
             row: r,
             col: c,
             deskNumber: deskNumber++,
@@ -184,10 +184,10 @@ class ClassroomManager {
 
   fromJSON(data) {
     if (!data) return;
-    this.rows = data.rows || 5;
-    this.cols = data.cols || 6;
+    this.rows = parseInt(data.rows, 10) || 5;
+    this.cols = parseInt(data.cols, 10) || 6;
     this.podiumPosition = data.podiumPosition || 'top';
-    if (data.grid && Array.isArray(data.grid)) {
+    if (data.grid && Array.isArray(data.grid) && data.grid.length === this.rows && data.grid[0] && data.grid[0].length === this.cols) {
       this.grid = data.grid;
     } else {
       this.initGrid();
