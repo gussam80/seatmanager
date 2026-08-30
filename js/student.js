@@ -5,7 +5,7 @@
 class StudentManager {
   constructor() {
     this.students = [];
-    this.loadDefaultSample();
+    // Initialized empty
   }
 
   loadDefaultSample() {

@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnLoadSample) {
     btnLoadSample.addEventListener('click', () => {
-      studentMgr.loadDefaultSample();
+      studentMgr.clearAll();
       conditionMgr.clearAll();
       renderStudentTable();
       updateGlobalStats();
@@ -996,7 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmReset.addEventListener('click', () => {
       StorageManager.clearAll();
       classroom.initGrid();
-      studentMgr.loadDefaultSample();
+      studentMgr.clearAll();
       conditionMgr.clearAll();
       currentSeating = null;
       closeModal(resetModal);
