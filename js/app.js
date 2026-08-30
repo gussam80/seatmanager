@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = filterText.trim().toLowerCase();
     const filtered = q ? students.filter(s => s.name.toLowerCase().includes(q) || String(s.number).includes(q)) : students;
 
+    if (inputStudentNum) { inputStudentNum.value = students.length + 1; }
     if (studentCountDisplay) {
       studentCountDisplay.innerHTML = `총 <strong>${students.length}명</strong>의 학생을 불러왔습니다. (남: ${students.filter(s => s.gender === '남').length}명 / 여: ${students.filter(s => s.gender === '여').length}명)`;
     }
