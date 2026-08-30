@@ -1,7 +1,5 @@
 /**
  * Student Roster & Excel Import/Export Management Module
- * Supports Excel (.xlsx, .xls, .csv) upload, template generation,
- * student list CRUD, and gender tagging.
  */
 
 class StudentManager {
@@ -10,49 +8,43 @@ class StudentManager {
     this.loadDefaultSample();
   }
 
-  /**
-   * Loads realistic default Korean student roster (25 students)
-   */
   loadDefaultSample() {
     const sampleNames = [
-      { num: 1, name: '김민수', gender: '남' },
+      { num: 1, name: '김민준', gender: '남' },
       { num: 2, name: '이서연', gender: '여' },
-      { num: 3, name: '박지훈', gender: '남' },
-      { num: 4, name: '최유진', gender: '여' },
-      { num: 5, name: '정우진', gender: '남' },
-      { num: 6, name: '한지민', gender: '여' },
-      { num: 7, name: '이도윤', gender: '남' },
-      { num: 8, name: '김하늘', gender: '여' },
-      { num: 9, name: '박정우', gender: '남' },
-      { num: 10, name: '윤서아', gender: '여' },
-      { num: 11, name: '조민재', gender: '남' },
-      { num: 12, name: '신예은', gender: '여' },
-      { num: 13, name: '배준혁', gender: '남' },
-      { num: 14, name: '오수아', gender: '여' },
-      { num: 15, name: '송성민', gender: '남' },
-      { num: 16, name: '권채원', gender: '여' },
-      { num: 17, name: '황도현', gender: '남' },
-      { num: 18, name: '송다은', gender: '여' },
-      { num: 19, name: '유승우', gender: '남' },
-      { num: 20, name: '서지안', gender: '여' },
-      { num: 21, name: '문태양', gender: '남' },
-      { num: 22, name: '안소율', gender: '여' },
-      { num: 23, name: '박진우', gender: '남' },
-      { num: 24, name: '양하은', gender: '여' },
-      { num: 25, name: '차은우', gender: '남' }
+      { num: 3, name: '박도윤', gender: '남' },
+      { num: 4, name: '최지우', gender: '여' },
+      { num: 5, name: '정예준', gender: '남' },
+      { num: 6, name: '강서아', gender: '여' },
+      { num: 7, name: '조하준', gender: '남' },
+      { num: 8, name: '윤지유', gender: '여' },
+      { num: 9, name: '장주원', gender: '남' },
+      { num: 10, name: '임채원', gender: '여' },
+      { num: 11, name: '한시우', gender: '남' },
+      { num: 12, name: '오수아', gender: '여' },
+      { num: 13, name: '서진우', gender: '남' },
+      { num: 14, name: '신다은', gender: '여' },
+      { num: 15, name: '권우진', gender: '남' },
+      { num: 16, name: '황예은', gender: '여' },
+      { num: 17, name: '안유준', gender: '남' },
+      { num: 18, name: '송민서', gender: '여' },
+      { num: 19, name: '류은우', gender: '남' },
+      { num: 20, name: '홍소율', gender: '여' },
+      { num: 21, name: '고태양', gender: '남' },
+      { num: 22, name: '문예린', gender: '여' },
+      { num: 23, name: '양선우', gender: '남' },
+      { num: 24, name: '손지아', gender: '여' },
+      { num: 25, name: '배준혁', gender: '남' }
     ];
 
     this.students = sampleNames.map((s, idx) => ({
-      id: std_,
+      id: 'std_' + (idx + 1) + '_' + Math.random().toString(36).substr(2, 6),
       number: s.num,
       name: s.name,
       gender: s.gender
     }));
   }
 
-  /**
-   * Adds a new student
-   */
   addStudent(number, name, gender = '미지정') {
     const cleanName = (name || '').trim();
     if (!cleanName) {
@@ -62,7 +54,7 @@ class StudentManager {
     const cleanNum = parseInt(number, 10) || (this.students.length + 1);
 
     const newStudent = {
-      id: std__,
+      id: 'std_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
       number: cleanNum,
       name: cleanName,
       gender: ['남', '여'].includes(gender) ? gender : '미지정'
@@ -73,9 +65,6 @@ class StudentManager {
     return newStudent;
   }
 
-  /**
-   * Updates an existing student
-   */
   updateStudent(id, number, name, gender) {
     const student = this.students.find(s => s.id === id);
     if (!student) return false;
@@ -88,37 +77,22 @@ class StudentManager {
     return true;
   }
 
-  /**
-   * Deletes a student
-   */
   deleteStudent(id) {
     this.students = this.students.filter(s => s.id !== id);
   }
 
-  /**
-   * Clears all students
-   */
   clearAll() {
     this.students = [];
   }
 
-  /**
-   * Sorts student list by number
-   */
   sortStudents() {
     this.students.sort((a, b) => a.number - b.number);
   }
 
-  /**
-   * Find student by ID
-   */
   getById(id) {
     return this.students.find(s => s.id === id);
   }
 
-  /**
-   * Parses Excel / CSV files using SheetJS
-   */
   async parseExcelFile(file) {
     return new Promise((resolve, reject) => {
       if (typeof XLSX === 'undefined') {
@@ -141,7 +115,6 @@ class StudentManager {
             return;
           }
 
-          // Detect columns
           let headerRowIndex = 0;
           let numCol = -1;
           let nameCol = -1;
@@ -152,7 +125,7 @@ class StudentManager {
             for (let c = 0; c < row.length; c++) {
               const cellStr = String(row[c]).trim().toLowerCase();
               if (['번호', 'num', 'no', 'number'].includes(cellStr)) numCol = c;
-              if (['이름', '성명', 'name', '학생이름', '학생'].includes(cellStr)) nameCol = c;
+              if (['이름', '성명', 'name', '학생이름', '학생명'].includes(cellStr)) nameCol = c;
               if (['성별', 'gender', 'sex'].includes(cellStr)) genderCol = c;
             }
             if (nameCol !== -1) {
@@ -187,7 +160,7 @@ class StudentManager {
             }
 
             parsedStudents.push({
-              id: std__,
+              id: 'std_' + Date.now() + '_' + r + '_' + Math.random().toString(36).substr(2, 4),
               number: rawNum,
               name: rawName,
               gender: rawGender
@@ -195,7 +168,7 @@ class StudentManager {
           }
 
           if (parsedStudents.length === 0) {
-            reject(new Error('엑셀에서 유효한 학생 명단을 찾을 수 없습니다. (이름 열 확인 필요)'));
+            reject(new Error('엑셀 파일 안에서 학생 명단을 찾을 수 없습니다. (열 이름 확인 필요)'));
             return;
           }
 
@@ -203,7 +176,7 @@ class StudentManager {
           this.sortStudents();
           resolve(this.students);
         } catch (err) {
-          reject(new Error(엑셀 파일 처리 중 오류가 발생했습니다: ));
+          reject(new Error('엑셀 파일 처리 중 오류가 발생했습니다: ' + err.message));
         }
       };
 
@@ -212,20 +185,17 @@ class StudentManager {
     });
   }
 
-  /**
-   * Generates and triggers download of sample Excel template
-   */
   downloadTemplate() {
     if (typeof XLSX === 'undefined') {
-      alert('엑셀 생성 라이브러리를 불러오는 중입니다.');
+      alert('엑셀 생성 라이브러리가 로드되지 않았습니다.');
       return;
     }
 
     const templateData = [
       ['번호', '이름', '성별'],
-      [1, '김민수', '남'],
+      [1, '김민준', '남'],
       [2, '이서연', '여'],
-      [3, '박지훈', '남']
+      [3, '박도윤', '남']
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(templateData);
@@ -247,4 +217,8 @@ class StudentManager {
       this.sortStudents();
     }
   }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = StudentManager;
 }

@@ -12,9 +12,6 @@ class StorageManager {
     SETTINGS: 'csm_app_settings'
   };
 
-  /**
-   * Saves all active state to LocalStorage
-   */
   static saveActiveState(layout, students, conditions, seating, settings) {
     try {
       if (layout) localStorage.setItem(this.KEYS.LAYOUT, JSON.stringify(layout.toJSON()));
@@ -27,9 +24,6 @@ class StorageManager {
     }
   }
 
-  /**
-   * Loads active state from LocalStorage
-   */
   static loadActiveState() {
     try {
       return {
@@ -45,15 +39,12 @@ class StorageManager {
     }
   }
 
-  /**
-   * Saves seating snapshot to History
-   */
   static saveToHistory(record) {
     try {
       const history = this.getHistory();
       const newRecord = {
-        id: hist_,
-        title: record.title || ${new Date().toLocaleDateString('ko-KR')} 자리배치,
+        id: 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        title: record.title || (new Date().toLocaleDateString('ko-KR') + ' 자리배치'),
         date: record.date || new Date().toISOString().slice(0, 10),
         timestamp: Date.now(),
         studentCount: record.studentCount || 0,
@@ -71,9 +62,6 @@ class StorageManager {
     }
   }
 
-  /**
-   * Gets history records
-   */
   static getHistory() {
     try {
       return JSON.parse(localStorage.getItem(this.KEYS.HISTORY) || '[]');
@@ -82,9 +70,6 @@ class StorageManager {
     }
   }
 
-  /**
-   * Deletes a record from History
-   */
   static deleteHistoryRecord(id) {
     try {
       const history = this.getHistory().filter(h => h.id !== id);
@@ -94,16 +79,10 @@ class StorageManager {
     }
   }
 
-  /**
-   * Clears entire application storage
-   */
   static clearAll() {
     Object.values(this.KEYS).forEach(k => localStorage.removeItem(k));
   }
 
-  /**
-   * Exports full database as JSON file download
-   */
   static exportJSON() {
     const exportData = {
       app: 'ClassroomSeatManager',
@@ -119,15 +98,12 @@ class StorageManager {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', 우리반자리바꾸기_백업_.json);
+    downloadAnchor.setAttribute('download', '우리반자리바꾸기_백업_' + new Date().toISOString().slice(0, 10) + '.json');
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
   }
 
-  /**
-   * Imports backup JSON file
-   */
   static async importJSON(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -135,7 +111,7 @@ class StorageManager {
         try {
           const data = JSON.parse(e.target.result);
           if (!data || typeof data !== 'object') {
-            throw new Error('유효하지 않은 백업 파일 형식입니다.');
+            throw new Error('유효하지 않은 백업 파일입니다.');
           }
 
           if (data.layout) localStorage.setItem(this.KEYS.LAYOUT, JSON.stringify(data.layout));
@@ -146,11 +122,15 @@ class StorageManager {
 
           resolve(data);
         } catch (err) {
-          reject(new Error(백업 파일 불러오기 실패: ));
+          reject(new Error('파일 데이터를 불러오는데 실패했습니다: ' + err.message));
         }
       };
       reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'));
       reader.readAsText(file);
     });
   }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = StorageManager;
 }
