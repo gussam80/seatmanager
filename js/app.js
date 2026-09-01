@@ -81,6 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnOpenPrintModal = document.getElementById('btn-open-print-modal');
   const classroomResultGrid = document.getElementById('classroom-result-grid');
   const seatingResultDateDisplay = document.getElementById('seating-result-date-display');
+  const btnOpenSwapModal = document.getElementById('btn-open-swap-modal');
+  const swapModal = document.getElementById('modal-swap');
+  const swapSelect1 = document.getElementById('swap-select-1');
+  const swapSelect2 = document.getElementById('swap-select-2');
+  const btnConfirmSwap = document.getElementById('btn-confirm-swap');
 
   // Step 5 Elements
   const historyTableBody = document.getElementById('history-table-body');
@@ -930,7 +935,96 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 11. Modal Logic (Save, Print, Guide, Reset, Backup)
+
+  // 10.5. Specific Student Seat Swap Logic
+  function populateSwapDropdowns() {
+    if (!swapSelect1 || !swapSelect2 || !currentSeating || !currentSeating.assignment) return;
+
+    swapSelect1.innerHTML = '';
+    swapSelect2.innerHTML = '';
+
+    const validDesks = classroom.getAllValidDesks();
+    const optionsData = [];
+
+    validDesks.forEach(desk => {
+      const seated = currentSeating.assignment[desk.id] || [];
+      const capacity = desk.type === 'double' ? 2 : 1;
+
+      for (let sIdx = 0; sIdx < capacity; sIdx++) {
+        const student = seated[sIdx];
+        const val = desk.id + '|' + sIdx;
+        let label = '';
+        if (student) {
+          const genderText = student.gender ? ' (' + student.gender + ')' : '';
+          label = student.number + '번. ' + student.name + genderText + ' - #' + desk.deskNumber + '번 책상';
+        } else {
+          label = '📭 빈 좌석 - #' + desk.deskNumber + '번 책상 (' + (sIdx === 0 ? '왼쪽' : '오른쪽') + ')';
+        }
+        optionsData.push({ value: val, label, isStudent: !!student });
+      }
+    });
+
+    optionsData.forEach((opt) => {
+      const o1 = document.createElement('option');
+      o1.value = opt.value;
+      o1.textContent = opt.label;
+      swapSelect1.appendChild(o1);
+
+      const o2 = document.createElement('option');
+      o2.value = opt.value;
+      o2.textContent = opt.label;
+      swapSelect2.appendChild(o2);
+    });
+
+    if (swapSelect1.options.length > 0) swapSelect1.selectedIndex = 0;
+    if (swapSelect2.options.length > 1) swapSelect2.selectedIndex = 1;
+  }
+
+  if (btnOpenSwapModal) {
+    btnOpenSwapModal.addEventListener('click', () => {
+      if (!currentSeating || !currentSeating.assignment) {
+        runSeatingSolver();
+      }
+      populateSwapDropdowns();
+      openModal(swapModal);
+    });
+  }
+
+  if (btnConfirmSwap) {
+    btnConfirmSwap.addEventListener('click', () => {
+      if (!currentSeating || !currentSeating.assignment) return;
+      const val1 = swapSelect1.value;
+      const val2 = swapSelect2.value;
+
+      if (!val1 || !val2 || val1 === val2) {
+        showToast('서로 다른 두 좌석을 선택해주세요.', 'warning');
+        return;
+      }
+
+      const parts1 = val1.split('|');
+      const parts2 = val2.split('|');
+      const deskId1 = parts1[0];
+      const sIdx1 = parseInt(parts1[1], 10);
+      const deskId2 = parts2[0];
+      const sIdx2 = parseInt(parts2[1], 10);
+
+      const st1 = currentSeating.assignment[deskId1] ? currentSeating.assignment[deskId1][sIdx1] : null;
+      const st2 = currentSeating.assignment[deskId2] ? currentSeating.assignment[deskId2][sIdx2] : null;
+
+      currentSeating.assignment[deskId1][sIdx1] = st2;
+      currentSeating.assignment[deskId2][sIdx2] = st1;
+
+      renderSeatingResult(currentSeating.assignment);
+      saveState();
+      closeModal(swapModal);
+
+      const name1 = st1 ? st1.name : '빈 좌석';
+      const name2 = st2 ? st2.name : '빈 좌석';
+      showToast(''' + name1 + ''와(과) '' + name2 + ''의 자리를 맞바꿨습니다!', 'success');
+    });
+  }
+
+    // 11. Modal Logic (Save, Print, Guide, Reset, Backup)
   const inputSaveTitle = document.getElementById('save-seating-title');
   const btnConfirmSave = document.getElementById('btn-confirm-save');
 

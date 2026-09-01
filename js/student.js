@@ -90,7 +90,8 @@ class StudentManager {
   }
 
   getById(id) {
-    return this.students.find(s => s.id === id);
+    if (!id) return null;
+    return this.students.find(s => String(s.id) === String(id) || String(s.number) === String(id)) || null;
   }
 
   async parseExcelFile(file) {

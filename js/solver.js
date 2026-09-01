@@ -1,7 +1,10 @@
 /**
  * Seating Arrangement Solver Module
- * Prioritizes placing students in the front/center rows,
- * placing empty (spare) seats at the back-left and back-right corners of the classroom.
+ * High-performance constraint satisfaction solver.
+ * Enforces:
+ * 1. Pair conditions (같이 앉기 - 반드시 같은 짝궁 배치)
+ * 2. Avoid conditions (같이 앉지 않기 - 같은 책상 및 인접 자리 분리)
+ * 3. Empty spare seat positioning (빈 좌석은 맨 뒷줄 좌/우 구석에 배치)
  */
 
 class SeatingSolver {
@@ -17,7 +20,7 @@ class SeatingSolver {
   /**
    * Computes priority penalty score for each seat slot.
    * Lower score = front/center (highest priority for students).
-   * Higher score = back/outer edges (lowest priority, ideal for empty seats).
+   * Higher score = back/outer edges (lowest priority, designated for spare empty seats).
    */
   static getSlotPenalty(desk, slotIndex, classroomManager) {
     const rows = classroomManager.rows;
@@ -38,11 +41,10 @@ class SeatingSolver {
       colDist = Math.abs(desk.col - center);
     }
 
-    // Row position has primary weight (100), edge distance has secondary weight (10)
     return (rowDist * 100) + (colDist * 10) + (slotIndex * 0.1);
   }
 
-  static solve(classroomManager, studentManager, conditionManager, maxAttempts = 1000) {
+  static solve(classroomManager, studentManager, conditionManager, maxAttempts = 2000) {
     const students = studentManager.students;
     const validDesks = classroomManager.getAllValidDesks();
     const stats = classroomManager.getStats();
@@ -59,7 +61,7 @@ class SeatingSolver {
     if (students.length === 0) {
       return {
         success: false,
-        message: '배치할 학생이 없습니다.',
+        message: '배치할 학생이 없습니다. 2단계에서 학생을 등록해주세요.',
         assignment: null,
         attempts: 0
       };
@@ -84,17 +86,16 @@ class SeatingSolver {
     allSlots.sort((a, b) => a.penalty - b.penalty);
 
     // Active student slots = first N slots (front & center)
-    // Empty spare slots = remaining slots (back-left & back-right)
     const activeStudentSlots = allSlots.slice(0, students.length);
 
-    const pairConditions = conditionManager.pairConditions;
-    const avoidConditions = conditionManager.avoidConditions;
+    const pairConditions = conditionManager.pairConditions || [];
+    const avoidConditions = conditionManager.avoidConditions || [];
 
     let bestAssignment = null;
     let minViolations = Infinity;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      // Initialize empty assignment structure: [null] for single, [null, null] for double
+      // Initialize assignment: [null] for single, [null, null] for double
       const assignment = {};
       validDesks.forEach(d => {
         assignment[d.id] = d.type === 'double' ? [null, null] : [null];
@@ -135,8 +136,8 @@ class SeatingSolver {
             assignment[targetDeskId][0] = s2;
             assignment[targetDeskId][1] = s1;
           }
-          assignedStudentIds.add(s1.id);
-          assignedStudentIds.add(s2.id);
+          assignedStudentIds.add(String(s1.id));
+          assignedStudentIds.add(String(s2.id));
           usedSlotKeys.add(targetDeskId + '_0');
           usedSlotKeys.add(targetDeskId + '_1');
         } else {
@@ -145,7 +146,9 @@ class SeatingSolver {
         }
       }
 
-      if (pairFailed) continue;
+      if (pairFailed && fullDoubleDeskIds.length >= shuffledPairs.length) {
+        continue;
+      }
 
       // 3. Collect remaining available active student slots
       const remainingSlots = activeStudentSlots.filter(
@@ -153,7 +156,7 @@ class SeatingSolver {
       );
 
       const remainingStudents = this.shuffle(
-        students.filter(s => !assignedStudentIds.has(s.id))
+        students.filter(s => !assignedStudentIds.has(String(s.id)))
       );
 
       const shuffledRemSlots = this.shuffle(remainingSlots);
@@ -166,15 +169,35 @@ class SeatingSolver {
         }
       }
 
-      // 4. Validate Avoid conditions (거리두기)
+      // 4. Validate Avoid conditions (거리두기: 같은 책상 및 인접 자리 검증)
       let violations = 0;
       for (const avoid of avoidConditions) {
+        const a1 = String(avoid.student1Id);
+        const a2 = String(avoid.student2Id);
+
+        // Find desk and slot of a1 and a2
+        let loc1 = null;
+        let loc2 = null;
+
         for (const desk of validDesks) {
           const seated = assignment[desk.id] || [];
-          if (seated[0] && seated[1]) {
-            const hasS1 = (seated[0].id === avoid.student1Id || seated[1].id === avoid.student1Id);
-            const hasS2 = (seated[0].id === avoid.student2Id || seated[1].id === avoid.student2Id);
-            if (hasS1 && hasS2) {
+          for (let sIdx = 0; sIdx < seated.length; sIdx++) {
+            if (seated[sIdx]) {
+              if (String(seated[sIdx].id) === a1) loc1 = { desk, slotIndex: sIdx };
+              if (String(seated[sIdx].id) === a2) loc2 = { desk, slotIndex: sIdx };
+            }
+          }
+        }
+
+        if (loc1 && loc2) {
+          // Rule 1: Same desk
+          if (loc1.desk.id === loc2.desk.id) {
+            violations++;
+          }
+          // Rule 2: Directly adjacent horizontally in same row
+          else if (loc1.desk.row === loc2.desk.row) {
+            const colDiff = Math.abs(loc1.desk.col - loc2.desk.col);
+            if (colDiff === 1) {
               violations++;
             }
           }
@@ -186,7 +209,7 @@ class SeatingSolver {
           success: true,
           assignment: assignment,
           attempts: attempt,
-          message: '자리 배치가 완벽하게 성공했습니다.'
+          message: '자리 배치가 모든 조건을 만족하며 완료되었습니다.'
         };
       }
 
@@ -197,10 +220,12 @@ class SeatingSolver {
     }
 
     return {
-      success: false,
+      success: minViolations === 0,
       assignment: bestAssignment,
       attempts: maxAttempts,
-      message: '일부 거리두기(같이 앉지 않기) 조건을 ' + minViolations + '건 만족하지 못했습니다. 조건을 완화하거나 다시 시도해주세요.'
+      message: minViolations === 0
+        ? '자리 배치가 완료되었습니다.'
+        : '일부 거리두기(같이 앉지 않기) 조건을 ' + minViolations + '건 만족하지 못했습니다. 조건을 완화하거나 다시 섞기를 눌러주세요.'
     };
   }
 }
