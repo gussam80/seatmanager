@@ -3,7 +3,7 @@
  * Main Application Controller & UI Coordinator
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initClassroomApp() {
   // 1. Initialize State & Managers
   const classroom = new ClassroomManager(5, 6);
   const studentMgr = new StudentManager();
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = filterText.trim().toLowerCase();
     const filtered = q ? students.filter(s => s.name.toLowerCase().includes(q) || String(s.number).includes(q)) : students;
 
-    if (inputStudentNum) { inputStudentNum.value = students.length + 1; }
+    if (inputStudentNum) { inputStudentNum.value = studentMgr.getNextStudentNumber(); }
     if (studentCountDisplay) {
       studentCountDisplay.innerHTML = `총 <strong>${students.length}명</strong>의 학생을 불러왔습니다. (남: ${students.filter(s => s.gender === '남').length}명 / 여: ${students.filter(s => s.gender === '여').length}명)`;
     }
@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         studentMgr.addStudent(num, name, gender);
         inputStudentName.value = '';
-        inputStudentNum.value = studentMgr.students.length + 1;
+        inputStudentNum.value = studentMgr.getNextStudentNumber();
         renderStudentTable();
         updateGlobalStats();
         saveState();
@@ -842,17 +842,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (btnRunSeating) {
+    if (btnRunSeating) {
     btnRunSeating.addEventListener('click', () => {
-      if (!currentSeating || !currentSeating.assignment) {
-        runSeatingSolver();
-      }
-      populateSwapDropdowns();
-      openModal(swapModal);
-      showToast('💡 자리 바꿀 학생을 선택해주세요.', 'info');
+      runSeatingSolver();
     });
   }
-  if (btnReshuffle) btnReshuffle.addEventListener('click', runSeatingSolver);
 
   if (dateInput) {
     dateInput.addEventListener('change', (e) => {
@@ -944,97 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-
-  // 10.5. Specific Student Seat Swap Logic
-  function populateSwapDropdowns() {
-    if (!swapSelect1 || !swapSelect2 || !currentSeating || !currentSeating.assignment) return;
-
-    swapSelect1.innerHTML = '';
-    swapSelect2.innerHTML = '';
-
-    const validDesks = classroom.getAllValidDesks();
-    const optionsData = [];
-
-    validDesks.forEach(desk => {
-      const seated = currentSeating.assignment[desk.id] || [];
-      const capacity = desk.type === 'double' ? 2 : 1;
-
-      for (let sIdx = 0; sIdx < capacity; sIdx++) {
-        const student = seated[sIdx];
-        const val = desk.id + '|' + sIdx;
-        let label = '';
-        if (student) {
-          const genderText = student.gender ? ' (' + student.gender + ')' : '';
-          label = student.number + '번. ' + student.name + genderText + ' - #' + desk.deskNumber + '번 책상';
-        } else {
-          label = '📭 빈 좌석 - #' + desk.deskNumber + '번 책상 (' + (sIdx === 0 ? '왼쪽' : '오른쪽') + ')';
-        }
-        optionsData.push({ value: val, label, isStudent: !!student });
-      }
-    });
-
-    optionsData.forEach((opt) => {
-      const o1 = document.createElement('option');
-      o1.value = opt.value;
-      o1.textContent = opt.label;
-      swapSelect1.appendChild(o1);
-
-      const o2 = document.createElement('option');
-      o2.value = opt.value;
-      o2.textContent = opt.label;
-      swapSelect2.appendChild(o2);
-    });
-
-    if (swapSelect1.options.length > 0) swapSelect1.selectedIndex = 0;
-    if (swapSelect2.options.length > 1) swapSelect2.selectedIndex = 1;
-  }
-
-  if (btnOpenSwapModal) {
-    btnOpenSwapModal.addEventListener('click', () => {
-      if (!currentSeating || !currentSeating.assignment) {
-        runSeatingSolver();
-      }
-      populateSwapDropdowns();
-      openModal(swapModal);
-    });
-  }
-
-  if (btnConfirmSwap) {
-    btnConfirmSwap.addEventListener('click', () => {
-      if (!currentSeating || !currentSeating.assignment) return;
-      const val1 = swapSelect1.value;
-      const val2 = swapSelect2.value;
-
-      if (!val1 || !val2 || val1 === val2) {
-        showToast('서로 다른 두 좌석을 선택해주세요.', 'warning');
-        return;
-      }
-
-      const parts1 = val1.split('|');
-      const parts2 = val2.split('|');
-      const deskId1 = parts1[0];
-      const sIdx1 = parseInt(parts1[1], 10);
-      const deskId2 = parts2[0];
-      const sIdx2 = parseInt(parts2[1], 10);
-
-      const st1 = currentSeating.assignment[deskId1] ? currentSeating.assignment[deskId1][sIdx1] : null;
-      const st2 = currentSeating.assignment[deskId2] ? currentSeating.assignment[deskId2][sIdx2] : null;
-
-      currentSeating.assignment[deskId1][sIdx1] = st2;
-      currentSeating.assignment[deskId2][sIdx2] = st1;
-
-      renderSeatingResult(currentSeating.assignment);
-      saveState();
-      closeModal(swapModal);
-
-      const name1 = st1 ? st1.name : '빈 좌석';
-      const name2 = st2 ? st2.name : '빈 좌석';
-      showToast(''' + name1 + ''와(과) '' + name2 + ''의 자리를 맞바꿨습니다!', 'success');
-    });
-  }
-
-    // 11. Modal Logic (Save, Print, Guide, Reset, Backup)
+  // 11. Modal Logic (Save, Print, Guide, Reset, Backup)
   const inputSaveTitle = document.getElementById('save-seating-title');
   const btnConfirmSave = document.getElementById('btn-confirm-save');
 
@@ -1150,4 +1054,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Boot
   setStep(1);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initClassroomApp);
+} else {
+  initClassroomApp();
+}

@@ -45,6 +45,24 @@ class StudentManager {
     }));
   }
 
+    getNextStudentNumber() {
+    if (!this.students || this.students.length === 0) return 1;
+    let maxNum = 0;
+    for (let i = 0; i < this.students.length; i++) {
+      const s = this.students[i];
+      if (!s) continue;
+      const strNum = String(s.number !== undefined ? s.number : "");
+      const match = strNum.match(/\d+/);
+      if (match) {
+        const num = parseInt(match[0], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
+      }
+    }
+    return maxNum + 1;
+  }
+
   addStudent(number, name, gender = '미지정') {
     const cleanName = (name || '').trim();
     if (!cleanName) {
