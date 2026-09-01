@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentSeating && currentSeating.assignment) {
         renderSeatingResult(currentSeating.assignment);
       } else {
-        renderEmptySeatingResult();
+        runSeatingSolver();
       }
     }
     if (stepNumber === 5) renderHistoryTable();
@@ -206,6 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       const next = parseInt(btn.getAttribute('data-next-step'), 10);
       setStep(next);
+      if (next === 4) {
+        runSeatingSolver();
+      }
     });
   });
 
