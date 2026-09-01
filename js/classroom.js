@@ -1,13 +1,14 @@
 /**
  * Classroom Layout Manager (교실 구조 및 책상 그리드 관리)
+ * Robust, fail-safe 2D grid management.
  */
 
 class ClassroomManager {
   constructor(rows = 5, cols = 6, podiumPosition = 'top') {
     this.rows = Math.max(1, Math.min(10, parseInt(rows, 10) || 5));
     this.cols = Math.max(1, Math.min(10, parseInt(cols, 10) || 6));
-    this.podiumPosition = podiumPosition; // 'top' | 'bottom'
-    this.grid = []; // 2D array: grid[row][col] = Desk
+    this.podiumPosition = podiumPosition === 'bottom' ? 'bottom' : 'top';
+    this.grid = [];
     this.initGrid();
   }
 
@@ -29,9 +30,45 @@ class ClassroomManager {
     }
   }
 
+  validateGrid() {
+    if (!this.grid || !Array.isArray(this.grid) || this.grid.length !== this.rows) {
+      this.initGrid();
+      return;
+    }
+    let deskNumber = 1;
+    for (let r = 0; r < this.rows; r++) {
+      if (!this.grid[r] || !Array.isArray(this.grid[r]) || this.grid[r].length !== this.cols) {
+        this.initGrid();
+        return;
+      }
+      for (let c = 0; c < this.cols; c++) {
+        const d = this.grid[r][c];
+        if (!d || typeof d !== 'object') {
+          this.grid[r][c] = {
+            id: 'desk_' + r + '_' + c,
+            row: r,
+            col: c,
+            deskNumber: deskNumber++,
+            type: 'double'
+          };
+        } else {
+          d.row = r;
+          d.col = c;
+          d.id = d.id || ('desk_' + r + '_' + c);
+          d.deskNumber = deskNumber++;
+          if (!['single', 'double', 'empty'].includes(d.type)) {
+            d.type = 'double';
+          }
+        }
+      }
+    }
+  }
+
   resize(newRows, newCols) {
     newRows = Math.max(1, Math.min(10, parseInt(newRows, 10) || 1));
     newCols = Math.max(1, Math.min(10, parseInt(newCols, 10) || 1));
+
+    this.validateGrid();
 
     const oldGrid = this.grid;
     const oldRows = this.rows;
@@ -52,7 +89,7 @@ class ClassroomManager {
             row: r,
             col: c,
             deskNumber: deskNumber++,
-            type: oldDesk.type
+            type: oldDesk.type || 'double'
           });
         } else {
           row.push({
@@ -69,6 +106,7 @@ class ClassroomManager {
   }
 
   toggleDeskType(r, c) {
+    this.validateGrid();
     if (r < 0 || r >= this.rows || c < 0 || c >= this.cols) return;
     const current = this.grid[r][c].type;
     // Rotation: double -> single -> empty -> double
@@ -82,6 +120,7 @@ class ClassroomManager {
   }
 
   setDeskType(r, c, type) {
+    this.validateGrid();
     if (r < 0 || r >= this.rows || c < 0 || c >= this.cols) return;
     if (['single', 'double', 'empty'].includes(type)) {
       this.grid[r][c].type = type;
@@ -89,6 +128,7 @@ class ClassroomManager {
   }
 
   setAllDeskTypes(type) {
+    this.validateGrid();
     if (!['single', 'double', 'empty'].includes(type)) return;
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -111,7 +151,6 @@ class ClassroomManager {
       this.resize(5, 5);
       this.setAllDeskTypes('single');
     } else if (presetName === '3-groups') {
-      // 3-group layout: 5 rows x 8 cols (2 desks + corridor + 2 desks + corridor + 2 desks)
       this.resize(5, 8);
       for (let r = 0; r < this.rows; r++) {
         for (let c = 0; c < this.cols; c++) {
@@ -126,6 +165,7 @@ class ClassroomManager {
   }
 
   getStats() {
+    this.validateGrid();
     let totalDesks = 0;
     let doubleDesks = 0;
     let singleDesks = 0;
@@ -161,6 +201,7 @@ class ClassroomManager {
   }
 
   getAllValidDesks() {
+    this.validateGrid();
     const list = [];
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -174,6 +215,7 @@ class ClassroomManager {
   }
 
   toJSON() {
+    this.validateGrid();
     return {
       rows: this.rows,
       cols: this.cols,
@@ -184,11 +226,12 @@ class ClassroomManager {
 
   fromJSON(data) {
     if (!data) return;
-    this.rows = parseInt(data.rows, 10) || 5;
-    this.cols = parseInt(data.cols, 10) || 6;
-    this.podiumPosition = data.podiumPosition || 'top';
-    if (data.grid && Array.isArray(data.grid) && data.grid.length === this.rows && data.grid[0] && data.grid[0].length === this.cols) {
+    this.rows = Math.max(1, Math.min(10, parseInt(data.rows, 10) || 5));
+    this.cols = Math.max(1, Math.min(10, parseInt(data.cols, 10) || 6));
+    this.podiumPosition = data.podiumPosition === 'bottom' ? 'bottom' : 'top';
+    if (data.grid && Array.isArray(data.grid) && data.grid.length === this.rows) {
       this.grid = data.grid;
+      this.validateGrid();
     } else {
       this.initGrid();
     }

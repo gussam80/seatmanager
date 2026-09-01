@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 6. Step 1: Classroom Layout Logic & Render
   function renderLayoutEditor() {
     if (!classroomLayoutGrid) return;
+    if (classroom.validateGrid) classroom.validateGrid();
     if (rowsInput) rowsInput.value = classroom.rows;
     if (colsInput) colsInput.value = classroom.cols;
     if (podiumPositionSelect) podiumPositionSelect.value = classroom.podiumPosition;
