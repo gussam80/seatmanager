@@ -1,6 +1,6 @@
 @page {
   size: A4 landscape;
-  margin: 12mm 15mm;
+  margin: 10mm 15mm;
 }
 
 @media print {
@@ -12,7 +12,7 @@
     print-color-adjust: exact;
   }
 
-  /* Hide all interactive UI */
+  /* Hide all non-printable UI, buttons, alerts, banners, and modals */
   .app-header,
   .status-bar,
   .step-navigation,
@@ -22,6 +22,8 @@
   .btn,
   .modal-backdrop,
   .toast-container,
+  .alert-box,
+  #swap-notice-banner,
   .no-print,
   #step-1, #step-2, #step-3, #step-5 {
     display: none !important;
@@ -40,105 +42,112 @@
     margin: 0 !important;
   }
 
-  /* Show Print Only Container */
+  /* Print Header: Only 학급 and 담임 */
   .print-only-header {
     display: block !important;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     border-bottom: 2px solid #000;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
   }
 
   .print-title {
-    font-size: 22pt;
-    font-weight: bold;
-    margin-bottom: 8px;
-    letter-spacing: 2px;
+    font-size: 20pt;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: 1.5px;
+    color: #000;
   }
 
   .print-meta-info {
     display: flex;
     justify-content: space-between;
-    font-size: 11pt;
-    font-weight: 600;
-    margin-top: 6px;
+    align-items: center;
+    font-size: 12pt;
+    font-weight: 700;
+    margin-top: 4px;
+    padding: 0 4px;
   }
 
-  .print-only-footer {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 1px solid #666;
-    font-size: 11pt;
-  }
-
-  /* Classroom Layout Print adjustments */
+  /* Classroom Layout & Desks */
   .classroom-layout-container {
     background: white !important;
     border: none !important;
     padding: 0 !important;
+    margin: 0 auto !important;
     min-height: auto !important;
   }
 
   .teacher-podium-area {
-    margin-bottom: 20px !important;
+    margin-bottom: 16px !important;
   }
 
   .blackboard {
-    background: #2b3a30 !important;
+    background: #1e3a2b !important;
     color: white !important;
     border: 2px solid #000 !important;
     font-size: 10pt !important;
-    padding: 4px 10px !important;
+    font-weight: bold !important;
+    padding: 5px 24px !important;
   }
 
   .teacher-desk {
-    background: #52341d !important;
+    background: #d97706 !important;
     color: white !important;
     font-size: 9pt !important;
-    padding: 4px 16px !important;
+    font-weight: bold !important;
+    padding: 4px 18px !important;
   }
 
   .classroom-grid {
     gap: 12px !important;
     max-width: 100% !important;
+    margin: 0 auto !important;
   }
 
   .desk-box {
     background: #ffffff !important;
-    border: 2px solid #222 !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 8px !important;
     box-shadow: none !important;
     padding: 6px !important;
   }
 
   .desk-box.empty-corridor {
-    border: 1px dashed #ccc !important;
-    opacity: 0.2 !important;
+    border: 1.5px dashed #cbd5e1 !important;
+    opacity: 0.25 !important;
+  }
+
+  .desk-header-info {
+    font-size: 8pt !important;
+    color: #64748b !important;
+    margin-bottom: 2px !important;
   }
 
   .seat-slot {
-    background: #fff !important;
-    border: 1px solid #444 !important;
+    background: #ffffff !important;
+    border: 1.5px solid #475569 !important;
+    border-radius: 6px !important;
     box-shadow: none !important;
     min-height: 48px !important;
+    padding: 4px !important;
   }
 
   .seat-slot.empty-seat {
-    border: 1px dashed #999 !important;
-    background: #fafafa !important;
+    border: 1.5px dashed #94a3b8 !important;
+    background: #f8fafc !important;
   }
 
   .seat-student-num {
     font-size: 8pt !important;
-    color: #444 !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
   }
 
   .seat-student-name {
     font-size: 11pt !important;
-    font-weight: bold !important;
-    color: #000 !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
   }
 
   .seat-gender-dot {
@@ -146,7 +155,6 @@
   }
 }
 
-.print-only-header,
-.print-only-footer {
+.print-only-header {
   display: none;
 }

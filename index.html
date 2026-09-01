@@ -281,13 +281,12 @@
     </section>
     <!-- STEP 4: Seating Execution & Result -->
     <section id="step-4" class="step-panel" data-step="4">
-      <!-- Print Only Header -->
+      <!-- Print Only Header (학급, 담임, 좌석만 표시) -->
       <div class="print-only-header">
         <div id="print-display-title" class="print-title">우리 반 자리 배치표</div>
         <div class="print-meta-info">
-          <span id="print-display-class">학급명: ____________</span>
-          <span id="print-display-date">자리 바꾸기 날짜: 2026년 8월 30일</span>
-          <span id="print-display-count">학생 수: 25명</span>
+          <span id="print-display-class">학급: ____________</span>
+          <span id="print-display-teacher">담임: _______________ (서명)</span>
         </div>
       </div>
 
@@ -318,11 +317,7 @@
         <div id="classroom-result-grid" class="classroom-grid"></div>
       </div>
 
-      <!-- Print Only Footer -->
-      <div class="print-only-footer">
-        <div>※ 본 자리배치는 조건 및 공정 추첨 알고리즘에 의해 배치되었습니다.</div>
-        <div id="print-display-teacher" style="font-weight:bold;font-size:12pt;">담임교사: _______________ (서명)</div>
-      </div>
+
 
       <div class="step-actions-footer">
         <button class="btn btn-secondary" data-prev-step="3">⬅️ 이전: 조건 설정</button>
