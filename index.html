@@ -300,7 +300,6 @@
         </div>
         <div class="result-actions">
           <button id="btn-run-seating" class="btn btn-primary btn-lg">🎲 자리 바꾸기</button>
-          <button id="btn-reshuffle" class="btn btn-secondary btn-lg">🔄 전체 다시 섞기</button>
           <button id="btn-open-save-modal" class="btn btn-success">💾 현재 자리 저장</button>
           <button id="btn-open-print-modal" class="btn btn-secondary">🖨️ 자리 배치 출력</button>
         </div>
@@ -368,6 +367,36 @@
   </div>
 
   <!-- MODAL: Save Seating -->
+    <!-- Modal: Swap Specific Students -->
+  <div id="modal-swap" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">👥 자리 바꿀 학생을 선택해주세요</h3>
+        <button class="modal-close" data-close-modal="modal-swap">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert-box alert-info" style="margin-bottom:16px;">
+          <span>💡 서로 자리를 맞바꿀 두 학생(또는 빈 좌석)을 선택한 후 아래 <strong>[자리 맞바꾸기]</strong> 버튼을 누르세요.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">첫 번째 학생 (또는 좌석)</label>
+          <select id="swap-select-1" class="form-select"></select>
+        </div>
+        <div style="text-align:center;font-size:1.5rem;margin:8px 0;color:var(--primary);">
+          ↕️
+        </div>
+        <div class="form-group">
+          <label class="form-label">두 번째 학생 (또는 좌석)</label>
+          <select id="swap-select-2" class="form-select"></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close-modal="modal-swap">취소</button>
+        <button id="btn-confirm-swap" class="btn btn-primary">🔄 자리 맞바꾸기 실행</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-save" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-header">

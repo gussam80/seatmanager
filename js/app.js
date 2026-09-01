@@ -845,26 +845,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRunSeating.addEventListener('click', () => {
       if (!currentSeating || !currentSeating.assignment) {
         runSeatingSolver();
-        return;
       }
-
-      if (selectedSwapSlot && selectedSwapSlot.elem) {
-        selectedSwapSlot.elem.classList.remove('highlight-selected');
-        selectedSwapSlot = null;
-      }
-
-      showToast('💡 자리 바꿀 학생(또는 좌석)을 아래 배치도에서 선택해주세요.', 'info');
-
-      const swapNotice = document.getElementById('swap-notice-banner');
-      if (swapNotice) {
-        swapNotice.style.transition = 'all 0.3s ease';
-        swapNotice.style.transform = 'scale(1.02)';
-        swapNotice.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.35)';
-        setTimeout(() => {
-          swapNotice.style.transform = 'scale(1)';
-          swapNotice.style.boxShadow = 'none';
-        }, 1200);
-      }
+      populateSwapDropdowns();
+      openModal(swapModal);
+      showToast('💡 자리 바꿀 학생을 선택해주세요.', 'info');
     });
   }
   if (btnReshuffle) btnReshuffle.addEventListener('click', runSeatingSolver);
